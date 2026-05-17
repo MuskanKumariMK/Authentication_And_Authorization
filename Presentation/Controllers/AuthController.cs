@@ -32,13 +32,15 @@ namespace Presentation.Controllers
             {
                 return BadRequest("Password must contain uppercase, lowercase and number");
             }
-            var hashedPassword = _passwordService.HashPassword(dto.Password);
+            string salt = SaltGenerator.GenerateSalt();
+            var hashedPassword = _passwordService.HashPassword(dto.Password, salt);
 
             var user = new User
             {
                 Name = dto.Name,
                 Email = dto.Email,
-                PasswordHash = hashedPassword
+                PasswordHash = hashedPassword,
+                Salt = salt
             };
 
             await _userRepository.AddAsync(user);
@@ -54,8 +56,11 @@ namespace Presentation.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
+            string hashedPassword = _passwordService.HashPassword(dto.Password, user.Salt);
 
-            bool isPasswordValid = _passwordService.VerifyPassword(dto.Password, user.PasswordHash);
+            bool isPasswordValid = hashedPassword == user.PasswordHash;
+
+            //bool isPasswordValid = _passwordService.VerifyPassword(dto.Password, user.PasswordHash);
 
             if (!isPasswordValid)
             {

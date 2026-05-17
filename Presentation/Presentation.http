@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "name": "Muskan",
-  "email": "muskan@gmail1.com",
+  "email": "muskan@gmail2.com",
   "password": "Muskan123456"
 }
 
@@ -20,7 +20,7 @@ POST {{API_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-   "email": "muskan@gmail1.com",
+   "email": "muskan@gmail2.com",
   "password": "Muskan123456"
 }
 
@@ -49,4 +49,6 @@ Content-Type: application/json
   "password": "123456"
 }
 
-###
+### Get  Users 
+GET {{API_HostAddress}}/api/users
+
