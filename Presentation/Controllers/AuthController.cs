@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.Auth;
 using Core.Interfaces;
 using Core.Models;
+using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -10,10 +11,12 @@ namespace Presentation.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IPasswordService _passwordService;
 
-        public AuthController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository, IPasswordService passwordService)
         {
             _userRepository = userRepository;
+            _passwordService = passwordService;
         }
 
         [HttpPost("register")]
@@ -25,8 +28,11 @@ namespace Presentation.Controllers
             {
                 return BadRequest("Email already exists");
             }
-
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            if (!PasswordValidator.IsStrong(dto.Password))
+            {
+                return BadRequest("Password must contain uppercase, lowercase and number");
+            }
+            var hashedPassword = _passwordService.HashPassword(dto.Password);
 
             var user = new User
             {
@@ -49,7 +55,7 @@ namespace Presentation.Controllers
                 return Unauthorized("Invalid credentials");
             }
 
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            bool isPasswordValid = _passwordService.VerifyPassword(dto.Password, user.PasswordHash);
 
             if (!isPasswordValid)
             {

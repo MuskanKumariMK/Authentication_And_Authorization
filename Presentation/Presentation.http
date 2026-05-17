@@ -8,8 +8,8 @@ Content-Type: application/json
 
 {
   "name": "Muskan",
-  "email": "muskan@gmail.com",
-  "password": "123456"
+  "email": "muskan@gmail1.com",
+  "password": "Muskan123456"
 }
 
 
@@ -20,8 +20,8 @@ POST {{API_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "muskan@gmail.com",
-  "password": "123456"
+   "email": "muskan@gmail1.com",
+  "password": "Muskan123456"
 }
 
 

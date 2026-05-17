@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 //builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
