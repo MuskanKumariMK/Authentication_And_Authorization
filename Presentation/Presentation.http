@@ -1,6 +1,52 @@
 @API_HostAddress = http://localhost:5056
 
-GET {{API_HostAddress}}/weatherforecast/
-Accept: application/json
+### REGISTER USER
+
+
+POST {{API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Muskan",
+  "email": "muskan@gmail.com",
+  "password": "123456"
+}
+
+
+### LOGIN USER
+
+
+POST {{API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "muskan@gmail.com",
+  "password": "123456"
+}
+
+
+### LOGIN WITH WRONG PASSWORD
+
+
+POST {{API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "muskan@gmail.com",
+  "password": "wrongpassword"
+}
+
+
+### REGISTER DUPLICATE EMAIL
+
+
+POST {{API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Muskan",
+  "email": "muskan@gmail.com",
+  "password": "123456"
+}
 
 ###
