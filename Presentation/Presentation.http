@@ -12,7 +12,9 @@ Content-Type: application/json
   "password": "Muskan123456"
 }
 
+### LOGOUT USER 
 
+POST {{API_HostAddress}}/api/auth/logout
 ### LOGIN USER
 
 
@@ -51,4 +53,10 @@ Content-Type: application/json
 
 ### Get  Users 
 GET {{API_HostAddress}}/api/users
+
+
+
+### Get User Profile
+
+GET {{API_HostAddress}}/api/users/profile
 

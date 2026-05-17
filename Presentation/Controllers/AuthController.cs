@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -12,11 +13,13 @@ namespace Presentation.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordService _passwordService;
+        private readonly IAuthService _authService;
 
-        public AuthController(IUserRepository userRepository, IPasswordService passwordService)
+        public AuthController(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -66,8 +69,19 @@ namespace Presentation.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
-
+            await _authService.LoginAsync(HttpContext, user);
             return Ok("Login successful");
+        }
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.LogoutAsync(HttpContext);
+
+            return Ok(new
+            {
+                Message = "Logout successful"
+            });
         }
     }
 }
