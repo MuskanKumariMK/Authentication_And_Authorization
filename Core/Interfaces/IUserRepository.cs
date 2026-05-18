@@ -7,5 +7,6 @@ namespace Core.Interfaces
         Task<List<User>> GetAllAsync();
         Task<User> GetByIdAsync(int id);
         Task AddAsync(User user);
+        Task<User?> GetByEmailAsync(string email);
     }
 }
