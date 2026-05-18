@@ -1,24 +1,26 @@
 ﻿using Core.Common;
+using Core.DTOs.Auth;
 using Core.Interfaces;
 using Core.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
-namespace Authentication_And_Authorization.Controllers
+namespace Presentation.Controllers
 {
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
+        private readonly IAuthService _authService;
 
-        public UserController(IUserRepository repo)
+        public UserController(IUserRepository repo, IAuthService authService)
         {
             _repo = repo;
+            _authService = authService;
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var result = await _repo.GetAllAsync();
@@ -32,20 +34,20 @@ namespace Authentication_And_Authorization.Controllers
             return Ok(ApiResponse<object>.SuccessResponse(user));
 
         }
-        [Authorize]
+        //[Authorize]
+        [ProducesResponseType(typeof(ApiResponse<CurrentUserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("profile")]
         public IActionResult Profile()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var name = User.FindFirst(ClaimTypes.Name)?.Value;
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var currentUser = _authService.GetCurrentUser(HttpContext);
 
-            return Ok(new
+            if (currentUser == null)
             {
-                UserId = userId,
-                Name = name,
-                Email = email
-            });
+                return Unauthorized(ApiResponse<CurrentUserDto>.FailResponse("User not authenticated"));
+            }
+
+            return Ok(ApiResponse<CurrentUserDto>.SuccessResponse(currentUser));
         }
     }
 }

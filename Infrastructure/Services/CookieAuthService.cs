@@ -1,4 +1,5 @@
-﻿using Core.Interfaces;
+﻿using Core.DTOs.Auth;
+using Core.Interfaces;
 using Core.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -30,6 +31,22 @@ namespace Infrastructure.Services
         public async Task LogoutAsync(HttpContext context)
         {
             await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+        public CurrentUserDto? GetCurrentUser(HttpContext context)
+        {
+            var user = context.User;
+
+            if (user?.Identity == null || !user.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
+            return new CurrentUserDto
+            {
+                UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                Name = user.FindFirst(ClaimTypes.Name)?.Value,
+                Email = user.FindFirst(ClaimTypes.Email)?.Value
+            };
         }
     }
 }

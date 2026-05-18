@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.DTOs.Auth;
+using Core.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Core.Interfaces
@@ -8,5 +9,6 @@ namespace Core.Interfaces
         Task LoginAsync(HttpContext context, User user);
 
         Task LogoutAsync(HttpContext context);
+        CurrentUserDto? GetCurrentUser(HttpContext context);
     }
 }

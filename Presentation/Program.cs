@@ -27,6 +27,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+
+    options.Cookie.HttpOnly = true;
+
+    options.Cookie.IsEssential = true;
+
+    options.Cookie.Name = "SessionAuthCookie";
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -36,7 +48,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ICookieService, CookieService>();
-builder.Services.AddScoped<IAuthService, CookieAuthService>();
+//builder.Services.AddScoped<IAuthService, CookieAuthService>();
+builder.Services.AddScoped<IAuthService, SessionAuthService>();
 //builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
@@ -49,6 +62,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
