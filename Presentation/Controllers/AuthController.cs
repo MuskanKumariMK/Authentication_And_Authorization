@@ -69,8 +69,11 @@ namespace Presentation.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
-            await _authService.LoginAsync(HttpContext, user);
-            return Ok("Login successful");
+            var token = await _authService.LoginAsync(user);
+            return Ok(new
+            {
+                Token = token
+            });
         }
         [Authorize]
         [HttpPost("logout")]

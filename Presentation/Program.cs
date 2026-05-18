@@ -1,29 +1,64 @@
+using Core.Common;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddCookie(options =>
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//.AddCookie(options =>
+//{
+//    options.LoginPath = "/api/auth/login";
+
+//    options.LogoutPath = "/api/auth/logout";
+
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+
+//    options.Cookie.HttpOnly = true;
+
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+//    options.SlidingExpiration = true;
+//});
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("Jwt"));
+
+var jwtSettings = builder.Configuration
+    .GetSection("Jwt")
+    .Get<JwtSettings>();
+
+builder.Services.AddAuthentication(
+    JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
 {
-    options.LoginPath = "/api/auth/login";
+    options.TokenValidationParameters =
+        new TokenValidationParameters
+        {
+            ValidateIssuer = true,
 
-    options.LogoutPath = "/api/auth/logout";
+            ValidateAudience = true,
 
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            ValidateLifetime = true,
 
-    options.Cookie.HttpOnly = true;
+            ValidateIssuerSigningKey = true,
 
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            ValidIssuer = jwtSettings!.Issuer,
 
-    options.SlidingExpiration = true;
+            ValidAudience = jwtSettings.Audience,
+
+            IssuerSigningKey =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(
+                        jwtSettings.Key))
+        };
 });
 
 builder.Services.AddAuthorization();
@@ -49,7 +84,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ICookieService, CookieService>();
 //builder.Services.AddScoped<IAuthService, CookieAuthService>();
-builder.Services.AddScoped<IAuthService, SessionAuthService>();
+//builder.Services.AddScoped<IAuthService, SessionAuthService>();
+builder.Services.AddScoped<IAuthService, JwtAuthService>();
 //builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();

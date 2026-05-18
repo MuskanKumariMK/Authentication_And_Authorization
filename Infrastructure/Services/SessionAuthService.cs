@@ -37,5 +37,10 @@ namespace Infrastructure.Services
                 Email = context.Session.GetString("Email")
             };
         }
+
+        public Task<string> LoginAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

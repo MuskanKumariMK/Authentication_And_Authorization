@@ -6,6 +6,7 @@ namespace Core.Interfaces
 {
     public interface IAuthService
     {
+        Task<string> LoginAsync(User user);
         Task LoginAsync(HttpContext context, User user);
 
         Task LogoutAsync(HttpContext context);

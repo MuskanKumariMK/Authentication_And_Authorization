@@ -48,5 +48,10 @@ namespace Infrastructure.Services
                 Email = user.FindFirst(ClaimTypes.Email)?.Value
             };
         }
+
+        public Task<string> LoginAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
